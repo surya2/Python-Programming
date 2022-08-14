@@ -2,74 +2,112 @@
 import datetime
 import hashlib
 
-class Block:
-    blockNo = 0
-    amount = None
-    user = None
-    sale = None
-    recipient = None
-    hash = None
-    date = datetime.datetime.now()
-    next_hash = None
-    prev_hash = None
-
-    def __init__(self, amount, user, sale, recipient):
-        self.amount = amount
-        self.user = user
-        self.sale = sale
-        self.recipient = recipient
-        print("Start of Blockchain; Genesis Block: ")
-
-    def hash(self):
-        hash = hashlib.sha3_256()
-        hash.update(
-            str(self.amount).encode('utf-8') +
-            str(self.user).encode('utf-8') +
-            str(self.recipient).encode('utf-8') +
-            str(self.date).encode('utf-8') +
-            str(self.prev_hash).encode('utf-8') +
-            str(self.blockNo).encode('utf-8')
-        )
-        return hash.hexdigest()
-
-    def __str__(self):
-        return "Block: " + str(self.blockNo) + " by " + str(self.user) + "/nTo: " + str(self.recipient) + "/nTransaction Amount: " + str(self.amount) + "/nSale/Good Quantity: " + str(self.sale) + "/n1-Hash: " + str(self.hash) + "/n2-Previous Hash: " + str(self.prev_hash)
-
-class Blockchain:
-    maxNonce = 2**32
-    target = 2**(256-20)
-    block = Block("Genesis")
-    dummy = head = block
-
-    def compileBlock(self, amount):
-        self.amount = amount
-
-        self.addBlock(self.amount)
-    def addBlock(self, block):
-        block.prev_hash = self.block.hash()
-        block.blockNo = self.block.blockNo() + 1
-        self.block.next = self.block
-        self.block = self.block.next
-
-    def mine(self, amount, user, sale, recipient):
-        for i in ranger (0, maxNonce):
-            if((block.hash(), 16) <= self.target):
-                self.addBlock(block)
-                print(block)
+class Node:
+    def __init__(self, data="ThreadNode", name="Genesis", nextNode = None, hasRoot = True):
+        self.name = name
+        self.data = data
+        self.nextNode = nextNode
+        self.hasRoot = hasRoot
+        print("Node Name: " + str(name) + " | Data: " + str(data) + " |  Previous Hash: " + str(self.nextNode)[25:43])
+    def get_next(self):
+        return self.nextNode
+    def set_next(self, data):
+        self.nextNode = data
+    def get_data(self):
+        return self.data
+    def get_name(self):
+        return self.name
+    def get_name(self):
+        return str(self.name)
+    def has_next(self):
+        if self.get_next() is None:
+            return False
+        return True
+    def print(self):
+        return str("Node Name: " + str(self.name) + " | Data: " + str(self.data) + " | Hash: " + "  Previous Hash: " + str(self.nextNode)[25:43])
 
 
+class List:
+    def __init__(self, root=None, name="Genesis"):
+        self.root = root
+        self.name = name
+        print(self.root)
+        print(self.name)
+        self.size = 1
+    def add(self, data, name):
+        #m = hashlib.sha3_256()
+        self.data = data
+        self.name = name
+        new_node = Node(data, name, self.root, True)
+        self.root = new_node
+        newRoot = str(new_node)
+        print("Hash: " + newRoot[25:43])
+        print(" ")
+
+    def remove(self, d):  #don't fully understand this method
+        this_node = self.root
+        next_node = this_node.get_next
+
+        while this_node is not None:
+            if this_node.get_data() == d:
+                if next_node is not None:
+                    next_node.set_next(this_node.get_next())
+                else:
+                    self.root = this_node.get_next()
+                self.size -= 1
+                return True  # data removed
+            else:
+                next_node = this_node
+                this_node = this_node.get_next()
+        return False  # data not found
+
+    def display(self):
+        this_node = self.root
+        if this_node is None:
+            return
+        print(this_node.print())
+        while this_node.has_next():
+            this_node = this_node.get_next()
+            print(this_node.print())
+
+    def findByName(self, name):
+        this_node = self.root
+        next_node = this_node.get_next()
+        if this_node.get_name() == name:
+            print(this_node.print())
+            return
+        while this_node.has_next():
+            this_node = this_node.get_next()
+            if this_node.get_name() == name:
+                print(this_node.print())
+
+        #if this_node.get_name() == name:
+
+    def find(self, d):
+        this_node = self.root
+        next_node = this_node.get_next()
+        if this_node.get_data() == d:
+            print(this_node.print())
+            return
+        while this_node.has_next():
+            this_node = this_node.get_next()
+            if this_node.get_data() == d:
+                print(this_node.print())
+
+        #if this_node.get_name() == name:
+
+    def get_size(self):
+        return self.size
 
 
-
-
-
-username = input("Name of user: ")
-transaction_amount = input("Transaction Amount: ")
-sale = input("Quantity of sale: ")
-recipient = input("Recipient: ")
-
-b = Blockchain()
-b.compileBlock(transaction_amount)
-
-while b.head != None:
-    print(b.head)
+list = List()
+list.add(0, "Genesis Node")
+list.add(2, "First Node")
+list.add(3, "Next")
+list.add(6, "Root")
+list.remove(2)
+#list.removeByName("Root")
+list.display()
+print(" ")
+list.findByName("Next")
+list.find(6)

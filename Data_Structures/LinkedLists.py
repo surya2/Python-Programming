@@ -1,57 +1,133 @@
-class Node(object):
-    def __init__ (self, d, n = None):
-        self.data = d
-        self.next_node = n
-    def get_next (self):
-        return self.next_node
-    def set_next (self, n):
-        self.next_node = n
-    def get_data (self):
+class Node:
+    def __init__(self, data="ThreadNode", name="Genesis", nextNode = None, hasRoot = True):
+        self.name = name
+        self.data = data
+        self.nextNode = nextNode
+        self.hasRoot = hasRoot
+        print("Node Name: " + str(name) + " | Data: " + str(data) + " |  Next Node: " + str(nextNode)[25:43])
+    def get_next(self):
+        return self.nextNode
+    def set_next(self, data):
+        self.nextNode = data
+    def get_data(self):
         return self.data
-    def set_data(self, d):
-        self.data = d
+    def get_name(self):
+        return self.name
+    def get_name(self):
+        return str(self.name)
+    def has_next(self):
+        if self.get_next() is None:
+            return False
+        return True
+    def print(self):
+        return str("Node Name: " + str(self.name) + " | Data: " + str(self.data) + " |  Next Node: " + str(self.nextNode)[25:43])
 
-class LinkedList(object):
-    def __init__ (self, r = None):
-        self.root = r
-        self.size = 0
-    def get_size (self):
-        return self.size
-    def addNode (self, d):
-        new_node = Node(d, self.root)
+
+class List:
+    def __init__(self, root=None, name="Genesis"):
+        self.root = root
+        self.name = name
+        print(self.root)
+        print(self.name)
+        self.size = 1
+    def add(self, data, name):
+        self.data = data
+        self.name = name
+        new_node = Node(data, name, self.root, True)
         self.root = new_node
-        self.size += 1
-    def removeNode (self, d):
-        this_node = self.root
-        prev_node = None
-        while this_node:
-            if this_node.get_data() == d:
-                if prev_node:
-                    prev_node.set_next(this_node.get_next())
-                else:
-                    self.root = this_node
-                self.size -= 1
-                return True
-            else:
-                prev_node = this_node
-                this_node = this_node.get_next()
+        newRoot = str(new_node)
+        print("Update: New Root is this Node: " + newRoot[25:43])
+        print(" ")
 
-        return False
+    def remove(self, d):  #don't fully understand this method
+        this_node = self.root
+        next_node = this_node.get_next
+
+        while this_node is not None:
+            if this_node.get_data() == d:
+                if next_node is not None:
+                    next_node.set_next(this_node.get_next())
+                else:
+                    self.root = this_node.get_next()
+                self.size -= 1
+                return True  # data removed
+            else:
+                next_node = this_node
+                this_node = this_node.get_next()
+        return False  # data not found
+
+    def display(self):
+        this_node = self.root
+        if this_node is None:
+            return
+        print(this_node.print())
+        while this_node.has_next():
+            this_node = this_node.get_next()
+            print(this_node.print())
+
+    def findByName(self, name):
+        this_node = self.root
+        next_node = this_node.get_next()
+        if this_node.get_name() == name:
+            print(this_node.print())
+            return
+        while this_node.has_next():
+            this_node = this_node.get_next()
+            if this_node.get_name() == name:
+                print(this_node.print())
+
+        #if this_node.get_name() == name:
+
     def find(self, d):
         this_node = self.root
-        while this_node:
+        next_node = this_node.get_next()
+        if this_node.get_data() == d:
+            print(this_node.print())
+            return
+        while this_node.has_next():
+            this_node = this_node.get_next()
             if this_node.get_data() == d:
-                return d
-            else:
-                this_node = this_node.get_next()
-        return None
+                print(this_node.print())
+
+        #if this_node.get_name() == name:
+
+    def get_size(self):
+        return self.size
+
+
+list = List()
+list.add(0, "Genesis Node")
+list.add(2, "First Node")
+list.add(3, "Next")
+list.add(6, "Root")
+list.remove(2)
+#list.removeByName("Root")
+list.display()
+print(" ")
+list.findByName("Next")
+list.find(6)
+
+'''def adding():
+    value = input("Data for Next Node: ")
+    name = input("Node Name: ")
+    list.add(value, name)
+
+def removing():
+    value = input("What Data to Remove: ")
+    list.remove(value)
+
+while list:
+    decision = input("Add (a) or Remove (r)? ")
+    add = "a"
+    rem = "r"
+    if decision == add.upper() or add.lower():
+        adding()
+    else:
+        removing()'''
 
 
 
-myList = LinkedList()
-myList.addNode(5)
-myList.addNode(12)
-print(myList.get_size())
+
 
             
     

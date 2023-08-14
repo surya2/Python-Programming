@@ -2,11 +2,8 @@ class maxHeap:
     def __init__(self, items=[]):
         super().__init__()
         self.heap = [0]
-    def push(self, data):
-
     def peek(self):
-
-    def pop(self):
+        return self.heap[1]
 
     def swap(self, i, j):
         self.heap[i], self.heap[j] = self.heap[j], self.heap[i]
@@ -30,9 +27,3 @@ class maxHeap:
         if larger != index:
             self.swap(index, larger)
             self.bubbleDown(larger)
-
-
-    def __str__(self):
-
- 25
-3  4

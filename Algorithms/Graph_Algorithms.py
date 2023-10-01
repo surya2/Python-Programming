@@ -10,7 +10,6 @@ WHITE = 0
 GRAY = 1
 BLACK = 2
 
-
 class Edge:
     def __init__(self, dest_node, weight=1):
         self.weight = weight

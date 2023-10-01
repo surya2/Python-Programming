@@ -46,12 +46,12 @@ class BinaryTree:
             if currComparingNode.leftNode is None:
                 currComparingNode.setLeftNode(node)
                 return
-            self.add(node, currComparingNode.leftNode)
+            self.addNode(node, currComparingNode.leftNode)
         elif node.compare(currComparingNode) > 0:
             if currComparingNode.rightNode is None:
                 currComparingNode.setRightNode(node)
                 return
-            self.add(node, currComparingNode.rightNode)
+            self.addNode(node, currComparingNode.rightNode)
 
     def remove(self, content, metadata=None):
         self.removeNode(content, metadata, self.root)
@@ -59,13 +59,13 @@ class BinaryTree:
     def removeNode(self, content, metadata, currComparingNode):
         if (content < currComparingNode.content) or (
                 content == currComparingNode.content and metadata != currComparingNode.metadata):
-            self.remove(content, metadata, currComparingNode=currComparingNode.leftNode)
+            self.removeNode(content, metadata, currComparingNode=currComparingNode.leftNode)
         elif content > currComparingNode.content:
-            self.remove(content, metadata, currComparingNode=currComparingNode.rightNode)
+            self.removeNode(content, metadata, currComparingNode=currComparingNode.rightNode)
         elif currComparingNode.content == content and currComparingNode.metadata == metadata:
             removedNode = copy.deepcopy(currComparingNode)
             currComparingNode = currComparingNode.rightNode
-            self.add(currComparingNode.leftNode, currComparingNode=currComparingNode)
+            self.addNode(removedNode.leftNode, currComparingNode=currComparingNode)
             return removedNode
         else:
             return None

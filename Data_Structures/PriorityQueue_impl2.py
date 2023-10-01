@@ -9,8 +9,8 @@ def maxHeapComparator(firstElement, secondElement):
     return secondElement - firstElement
 
 
-class Node:
-    def __init__(self, data=None, priority:int = 0, pos: int = 0):
+class PQNode:
+    def __init__(self, data=None, priority: int = 0, pos: int = 0):
         self.content = data
         self.priority = priority
         self.pos = pos
@@ -19,38 +19,42 @@ class Node:
         self.pos = pos
 
     def compare(self, comparingNode, compareFunc):
-        if isinstance(self.content, int):
-            return compareFunc(self.priority, comparingNode.priority)
+        return compareFunc(self.priority, comparingNode.priority)
 
 
 class PriorityQueueImpl2:
-    def __init__(self, compareFunc, root: Node = None):
+    def __init__(self, compareFunc, root=None, priority=0):
         self.compareFunc = compareFunc
-        self.root = root
+        if not isinstance(root, PQNode):
+            self.root = PQNode(data=root, priority=priority)
+        elif isinstance(root, PQNode):
+            self.root = root
+
         if self.root is not None:
             self.root.setPos(1)
-        firstElement = object()
-        self.heap = (list((firstElement, self.root)) if self.root is not None else [firstElement])  # the heap for the priority queue
-        self.size = (1 if self.root is not None else 0) # size of the heap
+        firstElement = PQNode()
+        self.heap = (list((firstElement, self.root)) if root is not None else [firstElement])  # the heap for
+        # the priority queue
+        self.size = (1 if root is not None else 0)  # size of the heap
 
-    def parent(self, node: Node):
+    def parent(self, node: PQNode):
         if node == self.root: return self.root
         return self.heap[int(node.pos / 2)]
 
-    def leftNode(self, node: Node):
+    def leftNode(self, node: PQNode):
         if int(node.pos * 2) > self.size:
             return None
         return self.heap[int(node.pos * 2)]
 
-    def rightNode(self, node: Node):
+    def rightNode(self, node: PQNode):
         if int((node.pos * 2) + 1) > self.size:
             return None
         return self.heap[int((node.pos * 2) + 1)]
 
-    def isLeaf(self, node: Node):
+    def isLeaf(self, node: PQNode):
         return node.pos > (self.size / 2)
 
-    def swap(self, node: Node, swapPos: int):
+    def swap(self, node: PQNode, swapPos: int):
         posForOldNode = node.pos
         nodeToSwapOut = self.heap[swapPos]
         node.pos = swapPos
@@ -60,8 +64,10 @@ class PriorityQueueImpl2:
         return nodeToSwapOut
 
     def findNode(self, targetData):
+        # print(targetData)
         for node in self.heap:
-            if node.data == targetData:
+            # print(node.content)
+            if node.content == targetData:
                 return node
 
     def changePriority(self, data, newPriority):
@@ -71,7 +77,7 @@ class PriorityQueueImpl2:
         self.remove(targetNode)
         self.insert(targetNode_copy)
 
-    def heapify(self, node: Node):
+    def heapify(self, node: PQNode):
         if not self.isLeaf(node):
             swapPos = node.pos
             if self.rightNode(node) is not None:
@@ -87,12 +93,15 @@ class PriorityQueueImpl2:
                 nodeSwappedOut = self.swap(node, swapPos)
                 self.heapify(node)
 
-    def insert(self, obj, priority):
-        node: Node
-        if isinstance(obj, Node):
+    def insert(self, obj, priority=None):
+        node: PQNode
+        if isinstance(obj, PQNode):
             node = obj
+        elif priority is not None:
+            node = PQNode(data=obj, priority=priority)
         else:
-            node = Node(data=obj, priority=priority)
+            raise ValueError("No priority provided for given data. Cannot insert element if priority of element not "
+                             "provided.")
 
         self.heap.append(node)
         self.size += 1
@@ -100,6 +109,7 @@ class PriorityQueueImpl2:
         if self.root is None:
             self.root = node
             return
+        # print(self.parent(node).priority)
         while node.compare(self.parent(node), self.compareFunc) < 0:
             parentNodeSwappedOut = self.swap(node, self.parent(node).pos)
             if (node.pos == 1):
@@ -115,17 +125,27 @@ class PriorityQueueImpl2:
 
     def pop(self):
         nextNodeOffTree = self.heap[1]
+        content = nextNodeOffTree.content
         self.remove(nextNodeOffTree)
-        return nextNodeOffTree
+        return content
 
     def print(self):
         return [o.content for o in self.heap[1:]]
 
 
 minHeap = PriorityQueueImpl2(minHeapComparator)
-
+minHeap.insert("part1", 12)
+minHeap.insert("part2", 3)
+minHeap.insert("part3", 5)
+minHeap.insert("part4", 35)
+minHeap.insert("part5", 65)
+minHeap.insert("part6", 101)
+minHeap.insert("part7", 65)
+minHeap.insert("part8", 3)
+minHeap.insert("part9", 23)
+minHeap.changePriority("part2", 21)
 print(minHeap.print())
 
 pq = minHeap
-firstNumberOff = pq.pop().content
+firstNumberOff = pq.pop()
 print(f"Next node off {firstNumberOff} --> New Queue is {pq.print()}")

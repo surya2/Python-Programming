@@ -1,7 +1,7 @@
 import copy
 import math
 from typing import TypeVar
-from ..Data_Structures import PriorityQueueHeap as pq
+from ..Data_Structures import PriorityQueue_impl2 as PQ
 
 T = TypeVar('T')
 N = TypeVar('N')
@@ -21,7 +21,6 @@ class Edge:
     def getDestNode(self):
         return self.dest_node
 
-
 class Node:
     def __init__(self, data: T, name: N):
         self.data = data
@@ -38,6 +37,9 @@ class Node:
 
     def getData(self) -> T:
         return self.data
+
+    def __eq__(self, objToCompare):
+        return isinstance(objToCompare, Node) and self.name == objToCompare.name
 
 
 class Graph:
@@ -124,5 +126,56 @@ class Graph:
         topo_sort_list.insert(0, cur_node)
         self.topologically_sorted_list = topo_sort_list
 
-    def djikstra(self, start_node, dest_node):
-        self.pq = pq.Heap(pq.minHeapComparator, start_node)
+    def djikstra(self, start_node:Node, dest_node:Node):
+        pq = PQ.PriorityQueueImpl2(PQ.minHeapComparator, start_node)
+        start_node.parent = None
+        start_node.distance = 0
+        while pq.size > 0:
+            u = pq.pop()
+            u.color = GRAY
+            if u == dest_node:
+                break
+            for e in u.adjList:
+                v = e.dest_node
+                if e.dest_node.color == WHITE:
+                    v.parent = u
+                    v.distance = u.distance + e.weight
+                    pq.insert(v, v.dist)
+                elif u.distance + e.weight < v.distance:
+                    v.distance = v.distance + e.weight
+                    pq.changePriority(v, e.dest_node.distance)
+                    v.parent = u
+
+            u.color = BLACK
+
+        best_path = [dest_node.name]
+        curr_node = dest_node.parent
+        while curr_node is not None:
+            best_path[0] = curr_node.name
+            curr_node = curr_node.parent
+        return best_path
+
+    def prims(self, start_node: Node, dest_node: Node):
+        pq = PQ.PriorityQueueImpl2(PQ.minHeapComparator, start_node)
+        start_node.parent = None
+        start_node.distance = 0
+        while pq.size > 0:
+            u = pq.pop()
+            u.color = GRAY
+            if u == dest_node:
+                break
+            for e in u.adjList:
+                v = e.dest_node
+                if e.dest_node.color == WHITE:
+                    v.parent = u
+                    v.distance = e.weight
+                    pq.insert(v, v.dist)
+                elif e.weight < v.distance:
+                    v.distance = e.weight
+                    pq.changePriority(v, e.weight)
+                    v.parent = u
+
+            u.color = BLACK
+
+
+
